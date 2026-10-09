@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
 
     const response = await fetch(
-      "https://api.github.com/repos/Clovescence/Valerie/issues?state=open&creator=Clovescence",
+      "https://api.github.com/repos/Clovescence/Valerie/issues?state=open&creator=Clovescence&per_page=10",
       { headers }
     );
 

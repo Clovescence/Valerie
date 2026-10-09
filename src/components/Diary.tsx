@@ -70,7 +70,7 @@ export function Diary() {
                   <h3 className="mb-4 font-serif text-[clamp(1.75rem,1.2rem+1.6vw,2.6rem)] font-normal leading-[1.12] transition-colors duration-700 group-hover:text-sequoia-accent">
                     {entry.title}
                   </h3>
-                  <p className="max-w-2xl text-[1.06rem] leading-relaxed text-sequoia-light/75">{entry.body}</p>
+                  <p className="line-clamp-4 max-w-2xl text-[1.06rem] leading-relaxed text-sequoia-light/75">{entry.body}</p>
                 </div>
 
                 <div className="lg:col-span-2 lg:text-right">
@@ -88,6 +88,17 @@ export function Diary() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal delay={200} className="mt-16 text-center">
+          <a
+            href="https://github.com/Clovescence/Valerie/issues?q=is%3Aissue+is%3Aopen+author%3AClovescence"
+            target="_blank"
+            rel="noreferrer"
+            className="link-arrow inline-flex items-center gap-3 border-b border-sequoia-border pb-2 font-mono text-[0.75rem] uppercase tracking-[0.2em] text-sequoia-light/60 transition-colors duration-500 hover:border-sequoia-accent hover:text-sequoia-accent"
+          >
+            Explore the full archive <span aria-hidden="true">↗</span>
+          </a>
+        </Reveal>
       </div>
     </section>
   );
