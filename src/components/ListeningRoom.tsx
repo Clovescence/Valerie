@@ -140,6 +140,9 @@ export function ListeningRoom() {
                   <span className="record-spindle" />
                 </div>
               </TurntableLink>
+              <div className="tonearm-rest-mount" aria-hidden="true">
+                <div className="tonearm-rest" />
+              </div>
               <div className={track.isPlaying ? "tonearm is-engaged" : "tonearm"} aria-hidden="true">
                 <div className="tonearm-pivot">
                   <i />
