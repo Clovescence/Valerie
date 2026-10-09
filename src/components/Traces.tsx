@@ -86,7 +86,7 @@ export function Traces() {
   const archiveTraces = allTraces.slice(4);
 
   return (
-    <section id="traces" className="section-pad relative overflow-x-clip">
+    <section id="traces" className="pt-[var(--section-space)] relative overflow-x-clip">
       <SectionHeader
         index="04"
         label="Traces"
