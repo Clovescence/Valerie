@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>AFTERIMAGE — A personal archive of light, sound &amp; passing time</title>
+    <meta
+      name="description"
+      content="Afterimage is a personal archive of photographs, field notes and frequencies gathered while moving through the world."
+    />
+    <meta name="theme-color" content="#131614" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AFTERIMAGE — A personal archive" />
+    <meta property="og:description" content="Afterimage is a personal archive of photographs, field notes and frequencies gathered while moving through the world." />
+    <!-- You can swap this with one of your signature 'Anti-Frame' photos later -->
+    <meta property="og:image" content="/og-image.jpg" /> 
+
+    <!-- Favicon placeholders -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+    <style>
+      /* Paint the canvas before React boots so there is never a white/black flash. */
+      html { background: #131614; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

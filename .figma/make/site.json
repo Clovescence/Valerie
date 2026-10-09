@@ -1,0 +1,11 @@
+{
+  "title": "Afterimage — A personal archive",
+  "description": "A personal archive of photographs, field notes, music, and passing time.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

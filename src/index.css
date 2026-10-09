@@ -1,0 +1,626 @@
+@import "tailwindcss";
+/* Legacy analog objects live in the `components` layer, so Tailwind utilities
+   (which sit above it) can always override them — no more silent specificity wars. */
+@import "./analog.css" layer(components);
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TOKENS
+   ───────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-serif: "Instrument Serif", "Newsreader", Georgia, serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --color-sequoia-dark: #131614;
+  --color-sequoia-deep: #1a1f1c;
+  --color-sequoia-light: #e4e0d5;
+  --color-sequoia-accent: #82907a;
+  --color-sequoia-mute: #a0a8a2;
+  --color-sequoia-border: #2a322c;
+
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-silk: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+  color-scheme: dark;
+  /* One rhythm for the whole page. Everything breathes from these three values. */
+  --gutter: clamp(1.5rem, 0.25rem + 5vw, 6rem);
+  --section-space: clamp(6.5rem, 3rem + 9vw, 12rem);
+  --head-gap: clamp(3rem, 1.5rem + 4.5vw, 6rem);
+  --header-h: 5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    background: var(--color-sequoia-dark);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    min-width: 320px;
+    overflow-x: clip;
+    background: var(--color-sequoia-dark);
+    color: var(--color-sequoia-light);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "kern";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  button,
+  [role="button"],
+  a {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
+  }
+  img {
+    -webkit-user-drag: none;
+  }
+  :focus-visible {
+    outline: 1px solid var(--color-sequoia-accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  ::selection {
+    background: var(--color-sequoia-accent);
+    color: var(--color-sequoia-dark);
+  }
+}
+
+.ambient {
+  position: fixed;
+  inset: -50%;
+  z-index: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(130, 144, 122, 0.02) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(160, 168, 162, 0.025) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(115, 136, 109, 0.015) 0%, transparent 50%);
+  animation: ambient-breathe 20s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-breathe {
+  0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+  100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+}
+
+/* Lenis (inertial scroll) housekeeping */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-sequoia-border) var(--color-sequoia-dark);
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-sequoia-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-sequoia-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sequoia-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LAYOUT PRIMITIVES
+   ───────────────────────────────────────────────────────────────────────── */
+.container-page {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section-pad {
+  padding-block: var(--section-space);
+}
+.section-head-gap {
+  margin-bottom: var(--head-gap);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ATMOSPHERE — one continuous piece of film
+   Two fixed layers sit behind all content so section boundaries never read
+   as a change of mood: a slow time-based drift + a scroll-linked glow.
+   ───────────────────────────────────────────────────────────────────────── */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.ambient::before,
+.ambient::after {
+  content: "";
+  position: absolute;
+  inset: -20% -15%;
+  will-change: transform;
+}
+.ambient::before {
+  background:
+    radial-gradient(38% 34% at 80% 16%, rgb(130 144 122 / 0.1), transparent 70%),
+    radial-gradient(46% 40% at 12% 64%, rgb(88 106 94 / 0.14), transparent 70%);
+  animation: ambient-drift 46s var(--ease-silk) infinite alternate;
+}
+.ambient::after {
+  background:
+    radial-gradient(34% 30% at 62% 30%, rgb(228 224 213 / 0.035), transparent 70%),
+    radial-gradient(40% 36% at 24% 90%, rgb(130 144 122 / 0.09), transparent 70%);
+}
+@keyframes ambient-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to   { transform: translate3d(3%, 2%, 0) scale(1.06); }
+}
+@supports (animation-timeline: scroll()) {
+  .ambient::after {
+    animation: ambient-scroll linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes ambient-scroll {
+    from { transform: translate3d(0, 6%, 0); }
+    to   { transform: translate3d(-4%, -14%, 0); }
+  }
+}
+
+
+/* Scroll progress hairline */
+.af-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 70;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, #56685c, var(--color-sequoia-accent) 55%, var(--color-sequoia-light));
+  pointer-events: none;
+}
+@supports (animation-timeline: scroll()) {
+  .af-progress {
+    animation: af-progress linear both;
+    animation-timeline: scroll(root);
+  }
+  @keyframes af-progress {
+    to { transform: scaleX(1); }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   MARQUEE
+   ───────────────────────────────────────────────────────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(calc(-33.333333%)); }
+}
+.animate-marquee {
+  animation: marquee 80s linear infinite;
+  will-change: transform;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   REVEAL CHOREOGRAPHY
+   Nothing appears before it is meant to: elements stay parked until (a) the
+   intro has finished and (b) they actually enter the viewport.
+   ───────────────────────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 1.75rem, 0);
+  transition:
+    opacity 1.1s var(--ease-fluid) var(--reveal-delay, 0ms),
+    transform 1.3s var(--ease-fluid) var(--reveal-delay, 0ms);
+}
+.reveal[data-reveal="fade"] {
+  transform: none;
+}
+.reveal[data-reveal="scale"] {
+  transform: translate3d(0, 1.25rem, 0) scale(0.97);
+}
+[data-ready="true"] .reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+.reveal-line {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1.6s var(--ease-fluid) var(--reveal-delay, 0ms);
+}
+[data-ready="true"] .reveal-line[data-visible="true"] {
+  transform: scaleX(1);
+}
+
+/* Hero drifts away as the next chapter arrives (graceful no-op without support). */
+@supports (animation-timeline: view()) {
+  .hero-exit {
+    animation: hero-exit linear both;
+    animation-timeline: view();
+    animation-range: exit 5% exit 85%;
+  }
+  @keyframes hero-exit {
+    to { opacity: 0; transform: translate3d(0, -5vh, 0) scale(0.985); }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   HEADER + MENU
+   ───────────────────────────────────────────────────────────────────────── */
+.af-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  border-bottom: 1px solid transparent;
+  transition:
+    transform 0.8s var(--ease-fluid),
+    opacity 1.2s var(--ease-fluid),
+    background-color 0.6s ease,
+    border-color 0.6s ease,
+    backdrop-filter 0.6s ease;
+}
+[data-ready="false"] .af-header {
+  opacity: 0;
+}
+.af-header.is-scrolled {
+  background-color: rgb(19 22 20 / 0.72);
+  border-color: rgb(42 50 44 / 0.7);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+.af-header.is-hidden {
+  transform: translate3d(0, -101%, 0);
+}
+.af-header__inner {
+  height: var(--header-h);
+  transition: height 0.6s var(--ease-fluid);
+}
+.af-header.is-scrolled .af-header__inner {
+  height: 4rem;
+}
+
+.af-nav-link {
+  position: relative;
+  padding-block: 0.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(228 224 213 / 0.62);
+  transition: color 0.5s ease;
+}
+.af-nav-link::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0.1rem 0;
+  height: 1px;
+  background: var(--color-sequoia-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.7s var(--ease-fluid);
+}
+.af-nav-link:hover,
+.af-nav-link[aria-current="true"] {
+  color: var(--color-sequoia-light);
+}
+.af-nav-link:hover::after,
+.af-nav-link[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+
+.af-burger span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.7s var(--ease-fluid), opacity 0.4s ease;
+}
+.af-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.af-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.af-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.af-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: calc(var(--header-h) + 1rem) var(--gutter) 3rem;
+  background: rgb(19 22 20 / 0.94);
+  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(22px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease-fluid), visibility 0s linear 0.6s;
+}
+.af-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.6s var(--ease-fluid), visibility 0s;
+}
+.af-menu a {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 12vw, 4.5rem);
+  line-height: 1.1;
+  color: var(--color-sequoia-light);
+  opacity: 0;
+  transform: translate3d(0, 1.25rem, 0);
+  transition: opacity 0.5s ease, transform 0.8s var(--ease-fluid), color 0.4s ease;
+}
+.af-menu.is-open a {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+.af-menu a:hover {
+  color: var(--color-sequoia-accent);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LINKS / CONTROLS — one shared micro-interaction language
+   ───────────────────────────────────────────────────────────────────────── */
+.link-arrow > span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 0.6s var(--ease-fluid);
+}
+.link-arrow:hover > span[aria-hidden="true"] {
+  transform: translateX(0.3rem);
+}
+.link-arrow.is-prev:hover > span[aria-hidden="true"] {
+  transform: translateX(-0.3rem);
+}
+.link-arrow.is-up:hover > span[aria-hidden="true"] {
+  transform: translateY(-0.2rem);
+}
+
+.btn-frame {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--color-sequoia-light);
+  transition: color 0.6s var(--ease-fluid), border-color 0.6s var(--ease-fluid);
+}
+.btn-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--color-sequoia-accent);
+  transform: translate3d(0, 101%, 0);
+  transition: transform 0.7s var(--ease-fluid);
+}
+.btn-frame:hover {
+  color: var(--color-sequoia-dark);
+  border-color: var(--color-sequoia-accent);
+}
+.btn-frame:hover::before {
+  transform: none;
+}
+
+.field {
+  width: 100%;
+  background: transparent;
+  color: var(--color-sequoia-light);
+  border: 0 solid var(--color-sequoia-border);
+  transition: border-color 0.5s ease, background-color 0.5s ease;
+}
+.field::placeholder {
+  color: rgb(228 224 213 / 0.3);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--color-sequoia-accent);
+  background-color: rgb(130 144 122 / 0.04);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   GALLERY — the rope, rebuilt for continuity
+   Polaroids are keyed by a stable virtual index, so no node is ever remounted
+   mid-slide. Slot opacity follows the *destination* slot while the rope moves,
+   which removes the hard pop that used to happen when the animation ended.
+   ───────────────────────────────────────────────────────────────────────── */
+.photo-line {
+  touch-action: pan-y;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  backface-visibility: hidden;
+}
+.photo-line:active {
+  cursor: grabbing;
+}
+.photo-line.rope-moving-next,
+.photo-line.rope-moving-previous {
+  will-change: transform;
+}
+.photo-line.rope-moving-next .polaroid,
+.photo-line.rope-moving-previous .polaroid {
+  will-change: translate, rotate;
+}
+.polaroid {
+  backface-visibility: hidden;
+  transition:
+    transform 0.9s var(--ease-fluid),
+    opacity 1.1s var(--ease-silk),
+    box-shadow 0.9s var(--ease-fluid);
+}
+.polaroid.polaroid-slot-3:hover {
+  transform: rotate(0deg) translateY(calc(var(--hang-offset, 0px) - 6px));
+  box-shadow:
+    0 30px 60px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(255 246 224 / 0.16);
+}
+.polaroid .photo-frame img {
+  transition: filter 1s ease, transform 1.4s var(--ease-fluid);
+}
+.polaroid.polaroid-slot-3:hover .photo-frame img {
+  filter: saturate(0.85) contrast(1.05) sepia(0.06);
+  transform: scale(1.03);
+}
+/* Off-screen slots are hidden entirely so they never flash while sliding in. */
+.polaroid-slot-0,
+.polaroid-slot-6 {
+  opacity: 0;
+}
+.polaroid-slot-neg,
+.polaroid-slot-over {
+  opacity: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   INTRO HAND-OFF — a skip dissolves instead of cutting
+   ───────────────────────────────────────────────────────────────────────── */
+.intro.intro-leaving {
+  animation: intro-leave 0.85s var(--ease-silk) forwards;
+  pointer-events: none;
+}
+@keyframes intro-leave {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TRACES — hand-pinned notes
+   ───────────────────────────────────────────────────────────────────────── */
+.trace-note {
+  transform-origin: 50% 0;
+}
+.trace-card {
+  --tilt: 0deg;
+  rotate: var(--tilt);
+  transition: rotate 0.9s var(--ease-fluid), transform 0.9s var(--ease-fluid), box-shadow 0.9s var(--ease-fluid);
+}
+.trace-card:hover {
+  rotate: 0deg;
+  transform: translate3d(0, -4px, 0);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   REDUCED MOTION — everything settles instantly, nothing is hidden
+   ───────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-line {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .film-grain,
+  .ambient::before {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SUPPORTING RULES
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Masked line reveal (hero headline): the text rises out of its own baseline. */
+.reveal[data-reveal="line"] {
+  opacity: 1;
+  transform: translate3d(0, 112%, 0);
+  transition: transform 1.5s var(--ease-fluid) var(--reveal-delay, 0ms);
+}
+
+/* Scroll lock (intro / mobile menu) without the layout shift of a vanishing scrollbar. */
+html {
+  scrollbar-gutter: stable;
+}
+html.scroll-locked {
+  overflow: hidden;
+}
+
+/* Scroll cue */
+.scroll-cue {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 2rem;
+  overflow: hidden;
+  background: rgb(228 224 213 / 0.18);
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 45%;
+  background: var(--color-sequoia-accent);
+  animation: scroll-cue 2.4s var(--ease-silk) infinite;
+}
+@keyframes scroll-cue {
+  0%   { transform: translateY(-110%); }
+  70%  { transform: translateY(240%); }
+  100% { transform: translateY(240%); }
+}
+
+/* Taped-on trace notes */
+.trace-card::before {
+  content: "";
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  width: 3.75rem;
+  height: 1.15rem;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: rgb(158 167 156 / 0.5);
+  backdrop-filter: blur(1px);
+}
+
+/* Legibility: the legacy objects shipped 5–8px labels. Keep the micro-type feel, make it readable. */
+.intro-skip {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgb(228 224 213 / 0.55);
+  border-bottom-color: rgb(228 224 213 / 0.25);
+  transition: color 0.5s ease, border-color 0.5s ease;
+}
+.intro-skip:hover {
+  color: var(--color-sequoia-light);
+  border-bottom-color: var(--color-sequoia-accent);
+}
+.intro-copy {
+  font-size: 11px;
+}
+.turntable-label,
+.mixtape-heading,
+.tape-index,
+.bay-display {
+  font-size: 10px;
+}
+.bay-display strong {
+  font-size: 12px;
+}
+.tape-spine > span {
+  font-size: 8px;
+}
+.tape-spine strong {
+  font-size: 9px;
+}
+.polaroid figcaption {
+  font-size: 17px;
+}
+.polaroid figcaption small {
+  font-size: 10px;
+}

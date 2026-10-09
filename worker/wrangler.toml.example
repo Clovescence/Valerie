@@ -1,0 +1,12 @@
+name = "afterimage-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "afterimage-traces"
+database_id = "replace-with-your-d1-database-id"
+
+[vars]
+GITHUB_REPO = "your-name/your-repository"
+ALLOWED_ORIGIN = "https://your-afterimage-domain.example"
