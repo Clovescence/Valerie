@@ -101,7 +101,7 @@ export function Traces() {
       <div className="container-page">
         <div className="grid grid-cols-1 gap-[clamp(3.5rem,8vw,6rem)] lg:grid-cols-12 lg:items-start">
           <Reveal className="relative z-10 lg:col-span-5">
-              <div className="relative mb-10 overflow-hidden rounded-md border border-white/5 bg-white/5 p-[clamp(1.75rem,4vw,2.5rem)] shadow-inner backdrop-blur-md">
+              <form onSubmit={submitTrace} className="relative mb-10 overflow-hidden rounded-md border border-white/5 bg-white/5 p-[clamp(1.75rem,4vw,2.5rem)] shadow-inner backdrop-blur-md">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-50" />
                 <p className="relative z-10 mb-8 font-serif text-[1.75rem] leading-tight text-white/90">Leave something small behind.</p>
 
@@ -140,7 +140,7 @@ export function Traces() {
                 <output className="relative z-10 mt-6 block min-h-[1.25rem] font-serif text-[1rem] italic text-sequoia-accent" aria-live="polite">
                   {status}
                 </output>
-              </div>
+              </form>
           </Reveal>
 
           <div className="lg:col-span-7">
