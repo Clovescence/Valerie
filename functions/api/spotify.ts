@@ -89,8 +89,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return new Response(JSON.stringify({ track, playlists }), {
       headers: {
         "Content-Type": "application/json",
-        // Cache for 30 seconds to prevent getting rate limited by Spotify if traffic spikes
-        "Cache-Control": "public, max-age=30",
+        // Cache on the Edge for 5 seconds to prevent rate limiting, but force BROWSER to always check for fresh data
+        "Cache-Control": "public, s-maxage=5, max-age=0",
       },
     });
 

@@ -1877,6 +1877,7 @@
 }
 
 .cassette-label {
+  position: relative;
   height: 100%;
   padding: 6% 8%;
   overflow: hidden;
@@ -1884,6 +1885,24 @@
     repeating-linear-gradient(0deg, transparent 0 22px, rgba(34, 38, 34, 0.12) 23px 24px),
     #cdcfc2;
   border-radius: 5px;
+}
+
+.cassette-label::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--cover, none);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  filter: grayscale(80%) contrast(1.2);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.cassette-label > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cassette-label > span {
@@ -1907,9 +1926,15 @@
 }
 
 .cassette-label small {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 6px;
   color: #5c625d;
   font-family: var(--mono);
-  font-size: 7px;
+  font-size: 8px;
+  line-height: 1.4;
   text-transform: uppercase;
 }
 

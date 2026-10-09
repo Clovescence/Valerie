@@ -20,7 +20,10 @@ function CassetteTape({ tape }: { tape: Playlist }) {
         <span>TYPE II</span>
         <span>60 MIN</span>
       </div>
-      <div className="cassette-label">
+      <div 
+        className="cassette-label"
+        style={tape.cover ? { "--cover": `url(${tape.cover})` } as React.CSSProperties : undefined}
+      >
         <span>AFTERIMAGE MIX SERIES</span>
         <strong>{tape.name}</strong>
         <small>{tape.description}</small>
@@ -71,7 +74,7 @@ export function ListeningRoom() {
       }
     };
     loadSpotify();
-    const interval = window.setInterval(loadSpotify, 30_000);
+    const interval = window.setInterval(loadSpotify, 10_000);
     return () => {
       alive = false;
       window.clearInterval(interval);
