@@ -1733,6 +1733,7 @@
 }
 
 .tape-spine strong {
+  min-height: 0;
   max-height: 80px;
   overflow: hidden;
   font-family: var(--mono);
@@ -2621,21 +2622,6 @@
     margin-top: 0;
   }
 
-  .turntable {
-    min-height: 450px;
-    padding: 24px;
-  }
-
-  .vinyl {
-    top: 15%;
-    left: 6%;
-    width: 78%;
-  }
-
-  .tonearm {
-    right: 5%;
-  }
-
   .track-meta {
     right: 24px;
     bottom: 22px;
@@ -2648,10 +2634,6 @@
 
   .cassette-reel {
     width: 32px;
-  }
-
-  .cassette-label strong {
-    font-size: 7vw;
   }
 
   .diary-entry {
