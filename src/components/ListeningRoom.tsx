@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, type ElementType } from "react";
+import { useState, useEffect, useMemo, useRef, type ElementType, type PointerEvent as ReactPointerEvent } from "react";
 import { Track, Playlist } from "../types";
 import { demoTrack, demoPlaylists } from "../data/mock";
 import { apiEnabled, apiUrl } from "../lib/api";
@@ -56,6 +56,7 @@ export function ListeningRoom() {
   const [moves, setMoves] = useState(0);
   const [direction, setDirection] = useState<"next" | "previous">("next");
   const [isLive, setIsLive] = useState(false);
+  const rackDragStart = useRef<number | null>(null);
 
   useEffect(() => {
     if (!apiEnabled) return;
@@ -93,6 +94,17 @@ export function ListeningRoom() {
     setDirection(amount > 0 ? "next" : "previous");
     setCursor((value) => value + amount);
     setMoves((value) => value + 1);
+  };
+
+  const onRackPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    rackDragStart.current = event.clientX;
+  };
+
+  const onRackPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (rackDragStart.current === null) return;
+    const distance = event.clientX - rackDragStart.current;
+    rackDragStart.current = null;
+    if (Math.abs(distance) >= 44) moveCassettes(distance < 0 ? 1 : -1);
   };
 
   const nowPlaying = track.isPlaying ? "Now playing" : "Last played";
@@ -202,7 +214,15 @@ export function ListeningRoom() {
             </div>
 
             <div className="cassette-jukebox">
-              <div className="cassette-magazine" role="group" aria-label="Playlist cassette rack">
+              <div
+                className="cassette-magazine"
+                role="group"
+                aria-label="Playlist cassette rack. Swipe to change playlist."
+                onPointerDown={onRackPointerDown}
+                onPointerUp={onRackPointerUp}
+                onPointerCancel={() => (rackDragStart.current = null)}
+                style={{ touchAction: "pan-y" }}
+              >
                 {rack.map(({ virtual, offset, playlist }) => (
                   <button
                     type="button"

@@ -398,6 +398,55 @@ html {
   .mixtapes-wrapper {
     max-width: none;
   }
+
+  #listening .section-head-gap {
+    margin-bottom: clamp(2.75rem, 10vw, 4rem);
+  }
+
+  #listening .listening-grid {
+    gap: clamp(7.5rem, 22vw, 10rem);
+  }
+
+  #listening .turntable-wrapper {
+    width: min(100%, 22rem);
+  }
+
+  #listening .mixtapes-wrapper > div:first-child {
+    margin-bottom: 1rem;
+  }
+
+  #listening .mixtapes-wrapper > div:first-child button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  #listening .cassette-jukebox {
+    padding: 0.625rem;
+  }
+
+  #listening .cassette-magazine {
+    height: 6.5rem;
+    padding: 0.625rem 0.625rem 0;
+    gap: 0.3rem;
+    cursor: grab;
+  }
+
+  #listening .cassette-magazine:active {
+    cursor: grabbing;
+  }
+
+  #listening .tape-spine {
+    padding: 0.5rem 0.25rem 0.35rem;
+  }
+
+  #listening .cassette-bay {
+    min-height: 21rem;
+    padding: 3rem 6% 2.5rem;
+  }
+
+  #listening .cassette-reel {
+    width: clamp(1.8rem, 10vw, 2.5rem);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
