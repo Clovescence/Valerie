@@ -13,11 +13,33 @@ const json = (data: unknown, status = 200, origin = "*") =>
     status,
     headers: {
       "Access-Control-Allow-Origin": origin,
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Cache-Control": "no-store",
+      Vary: "Origin",
     },
   });
+
+const resolveOrigin = (request: Request, env: Env) => {
+  const configured = env.ALLOWED_ORIGIN?.trim();
+  if (configured) return configured;
+  return request.headers.get("Origin") ?? "*";
+};
+
+const sanitizeText = (value: unknown, maxLength: number) => {
+  const text = String(value ?? "").trim().replace(/\s+/g, " ");
+  return text.slice(0, maxLength);
+};
+
+const isTracePayload = (value: unknown): value is { id?: string; name?: string; message?: string } => {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    (candidate.id === undefined || typeof candidate.id === "string") &&
+    (candidate.name === undefined || typeof candidate.name === "string") &&
+    (candidate.message === undefined || typeof candidate.message === "string")
+  );
+};
 
 const spotifyToken = async (env: Env) => {
   const credentials = btoa(`${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`);
@@ -122,19 +144,28 @@ async function getTraces(env: Env, origin: string) {
 }
 
 async function createTrace(request: Request, env: Env, origin: string) {
-  const body = (await request.json()) as {
-    id?: string;
-    name?: string;
-    message?: string;
-  };
-  const name = body.name?.trim().slice(0, 40);
-  const message = body.message?.trim().slice(0, 220);
-  if (!name || !message) return json({ error: "Name and message are required" }, 400, origin);
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch {
+    return json({ error: "Invalid trace payload" }, 400, origin);
+  }
+
+  if (!isTracePayload(payload)) {
+    return json({ error: "Invalid trace payload" }, 400, origin);
+  }
+
+  const name = sanitizeText(payload.name, 40);
+  const message = sanitizeText(payload.message, 220);
+
+  if (!name || !message) {
+    return json({ error: "Name and message are required" }, 400, origin);
+  }
 
   await env.DB.prepare(
     "INSERT INTO traces (id, name, message, created_at) VALUES (?, ?, ?, ?)",
   )
-    .bind(body.id || crypto.randomUUID(), name, message, new Date().toISOString())
+    .bind(payload.id || crypto.randomUUID(), name, message, new Date().toISOString())
     .run();
   return json({ ok: true }, 201, origin);
 }
@@ -142,10 +173,17 @@ async function createTrace(request: Request, env: Env, origin: string) {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    const origin = env.ALLOWED_ORIGIN || "*";
+    const origin = resolveOrigin(request, env);
+
     if (request.method === "OPTIONS") return json({}, 204, origin);
 
     try {
+      if (url.pathname === "/healthz" && request.method === "GET") {
+        return json({ ok: true, service: "afterimage-worker" }, 200, origin);
+      }
+      if (url.pathname === "/api/health" && request.method === "GET") {
+        return json({ ok: true, service: "afterimage-worker" }, 200, origin);
+      }
       if (url.pathname === "/api/spotify" && request.method === "GET") {
         return await getSpotify(env, origin);
       }

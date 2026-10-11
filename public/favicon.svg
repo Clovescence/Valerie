@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Afterimage favicon</title>
+  <desc id="desc">A warm circular monogram with minimal lines.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e4e0d5"/>
+      <stop offset="100%" stop-color="#82907a"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#131614"/>
+  <circle cx="64" cy="64" r="42" fill="none" stroke="url(#g)" stroke-width="4" opacity="0.9"/>
+  <path d="M34 72c10-24 32-30 53-20M33 58c12 10 20 22 26 38M73 33c12 3 22 13 29 28" fill="none" stroke="#e4e0d5" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+</svg>

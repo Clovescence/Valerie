@@ -154,7 +154,7 @@ html {
   background:
     radial-gradient(70% 52% at 50% 80%, rgb(var(--track-wash) / 0.2), transparent 72%),
     linear-gradient(120deg, rgb(var(--track-glow) / 0.08), transparent 42%),
-    var(--track-cover) center 80% / min(72rem, 92vw) auto no-repeat;
+    var(--track-cover) center 65% / min(72rem, 92vw) auto no-repeat;
   filter: blur(42px) saturate(1.25);
   opacity: var(--track-atmosphere-opacity, 0.2);
   transform: scale(1.12);
