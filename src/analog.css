@@ -1610,6 +1610,22 @@
   text-transform: uppercase;
 }
 
+@media (min-width: 768px) {
+  /* The spinning record's rotated visual bounds extend beyond the square
+     turntable box. Keep the controls and track metadata below that artwork. */
+  .turntable-wrapper {
+    padding-bottom: 145px;
+  }
+
+  .turntable-controls {
+    bottom: -78px;
+  }
+
+  .track-meta {
+    bottom: -135px;
+  }
+}
+
 .equalizer {
   display: flex;
   gap: 2px;
