@@ -5,8 +5,8 @@ import { SectionHeader } from "./SectionHeader";
 
 const OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
 const SLOT_COUNT = OFFSETS.length;
-/** Must stay in step with the rope animation in analog.css (1.4s) — this is only a safety net. */
-const MOVE_MS = 1400;
+/** Must stay in step with the rope animation in analog.css. */
+const MOVE_MS = 1100;
 const SWIPE_PX = 48;
 
 const wrap = (index: number, length: number) => ((index % length) + length) % length;
@@ -39,7 +39,7 @@ export function Gallery() {
       pendingRef.current = dir;
       setPending(dir);
       window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(commit, MOVE_MS + 400);
+      timer.current = window.setTimeout(commit, MOVE_MS + 120);
     },
     [commit],
   );
@@ -87,7 +87,7 @@ export function Gallery() {
           <div
             className={`photo-line ${pending === 1 ? "rope-moving-next" : pending === -1 ? "rope-moving-previous" : ""}`}
             onAnimationEnd={(event) => {
-              if (event.currentTarget === event.target) commit();
+              if (event.currentTarget === event.target && event.animationName.startsWith("rope-pull-")) commit();
             }}
           >
             {OFFSETS.map((offset, position) => {

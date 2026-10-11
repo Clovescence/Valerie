@@ -30,10 +30,10 @@ export function initScroll(): () => void {
   }
   lenis = new Lenis({
     autoRaf: true,
-    lerp: 0.09,
-    wheelMultiplier: 0.95,
+    lerp: 0.075,
+    wheelMultiplier: 0.9,
     smoothWheel: true,
-    anchors: { offset: 0, duration: 1.7, easing: easeOutExpo },
+    anchors: { offset: 0, duration: 1.9, easing: easeOutExpo },
   });
   applyLocks();
   return () => {

@@ -1027,14 +1027,17 @@
   margin-bottom: 30px;
   padding-top: 74px;
   transform-origin: 50% 55px;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 .photo-line.rope-moving-next {
-  animation: rope-pull-next 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: rope-pull-next 1.1s var(--ease-fluid) both;
 }
 
 .photo-line.rope-moving-previous {
-  animation: rope-pull-previous 1.4s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation: rope-pull-previous 1.1s var(--ease-fluid) both;
 }
 
 @keyframes rope-pull-next {
@@ -1078,6 +1081,8 @@
     0 0 0 1px rgba(241, 242, 237, 0.14);
   transition: transform 0.85s var(--ease-fluid), opacity 0.7s ease;
   transform-origin: 50% -38px;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
 .polaroid-variant-0 { --hang-offset: 18px; transform: rotate(-2deg) translateY(18px); }
@@ -1093,40 +1098,6 @@
 .polaroid-slot-2,
 .polaroid-slot-4 { opacity: 0.88; }
 .polaroid-slot-3 { z-index: 2; opacity: 1; }
-
-.rope-moving-next .polaroid,
-.rope-moving-previous .polaroid {
-  animation: polaroid-settle 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
-}
-
-.rope-moving-previous .polaroid {
-  animation-name: polaroid-settle-reverse;
-}
-
-.rope-moving-next .polaroid:nth-of-type(2),
-.rope-moving-previous .polaroid:nth-of-type(5) { animation-delay: 40ms; }
-.rope-moving-next .polaroid:nth-of-type(3),
-.rope-moving-previous .polaroid:nth-of-type(4) { animation-delay: 90ms; }
-.rope-moving-next .polaroid:nth-of-type(4),
-.rope-moving-previous .polaroid:nth-of-type(3) { animation-delay: 140ms; }
-.rope-moving-next .polaroid:nth-of-type(5),
-.rope-moving-previous .polaroid:nth-of-type(2) { animation-delay: 190ms; }
-
-@keyframes polaroid-settle {
-  0% { rotate: 0deg; }
-  25% { rotate: 6deg; }
-  60% { rotate: -3.5deg; }
-  82% { rotate: 1.5deg; }
-  100% { rotate: 0deg; }
-}
-
-@keyframes polaroid-settle-reverse {
-  0% { rotate: 0deg; }
-  25% { rotate: -6deg; }
-  60% { rotate: 3.5deg; }
-  82% { rotate: -1.5deg; }
-  100% { rotate: 0deg; }
-}
 
 .peg {
   position: absolute;
@@ -1333,6 +1304,7 @@
   border-radius: 50%;
   box-shadow:
     10px 25px 40px rgba(0, 0, 0, 0.8),
+    0 0 70px rgb(var(--track-glow, 130 144 122) / 0.12),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     inset 0 0 25px rgba(255, 255, 255, 0.04);
   will-change: transform;

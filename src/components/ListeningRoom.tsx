@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, type ElementType, type PointerEvent as ReactPointerEvent } from "react";
+import { useState, useEffect, useMemo, useRef, type CSSProperties, type ElementType, type PointerEvent as ReactPointerEvent } from "react";
 import { Track, Playlist } from "../types";
 import { demoTrack, demoPlaylists } from "../data/mock";
 import { apiEnabled, apiUrl } from "../lib/api";
@@ -8,9 +8,69 @@ import { SectionHeader } from "./SectionHeader";
 const wrap = (index: number, length: number) => ((index % length) + length) % length;
 const pad = (n: number) => String(n).padStart(2, "0");
 const OFFSETS = [-2, -1, 0, 1, 2] as const;
+const DEFAULT_PALETTE = { glow: "130 144 122", wash: "66 82 70" };
 
 /** An anchor only when there is somewhere to go; otherwise a plain element (no phantom #hash jumps). */
 const linkProps = (url?: string) => (url ? { href: url, target: "_blank", rel: "noreferrer" } : {});
+
+function useCoverPalette(cover: string) {
+  const [palette, setPalette] = useState(DEFAULT_PALETTE);
+
+  useEffect(() => {
+    if (!cover) {
+      setPalette(DEFAULT_PALETTE);
+      return;
+    }
+
+    let alive = true;
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      if (!alive) return;
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 5;
+        canvas.height = 5;
+        const context = canvas.getContext("2d");
+        if (!context) {
+          console.warn("Afterimage could not create a canvas for cover palette sampling.");
+          return;
+        }
+        context.drawImage(image, 0, 0, 5, 5);
+        const pixels = context.getImageData(0, 0, 5, 5).data;
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        let weight = 0;
+        for (let index = 0; index < pixels.length; index += 4) {
+          const alpha = pixels[index + 3] / 255;
+          red += pixels[index] * alpha;
+          green += pixels[index + 1] * alpha;
+          blue += pixels[index + 2] * alpha;
+          weight += alpha;
+        }
+        if (weight > 0) {
+          setPalette({
+            glow: `${Math.round(red / weight)} ${Math.round(green / weight)} ${Math.round(blue / weight)}`,
+            wash: `${Math.round(red / weight * 0.62 + 35)} ${Math.round(green / weight * 0.62 + 35)} ${Math.round(blue / weight * 0.62 + 35)}`,
+          });
+        }
+      } catch (error) {
+        console.warn("Afterimage could not sample the cover palette.", error);
+      }
+    };
+    image.onerror = () => console.warn("Afterimage could not load the cover for palette sampling.");
+    image.src = cover;
+
+    return () => {
+      alive = false;
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [cover]);
+
+  return palette;
+}
 
 function CassetteTape({ tape }: { tape: Playlist }) {
   const Tag: ElementType = tape.url ? "a" : "div";
@@ -57,6 +117,7 @@ export function ListeningRoom() {
   const [direction, setDirection] = useState<"next" | "previous">("next");
   const [isLive, setIsLive] = useState(false);
   const rackDragStart = useRef<number | null>(null);
+  const palette = useCoverPalette(track.cover);
 
   useEffect(() => {
     if (!apiEnabled) return;
@@ -109,9 +170,15 @@ export function ListeningRoom() {
 
   const nowPlaying = track.isPlaying ? "Now playing" : "Last played";
   const TurntableLink: ElementType = track.url ? "a" : "div";
+  const listeningStyle = {
+    "--track-glow": palette.glow,
+    "--track-wash": palette.wash,
+    "--track-cover": `url("${track.cover}")`,
+    "--track-atmosphere-opacity": track.isPlaying ? "0.28" : "0.12",
+  } as CSSProperties;
 
   return (
-    <section id="listening" className="section-pad relative">
+    <section id="listening" className={`listening-room section-pad relative ${track.isPlaying ? "is-playing" : "is-paused"}`} style={listeningStyle}>
       <SectionHeader
         index="02"
         label="Frequencies"

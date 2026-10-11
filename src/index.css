@@ -139,6 +139,42 @@ html {
   margin-bottom: var(--head-gap);
 }
 
+.listening-room {
+  --track-glow: 130 144 122;
+  --track-wash: 66 82 70;
+  --track-cover: none;
+  isolation: isolate;
+}
+
+.listening-room::before {
+  position: absolute;
+  inset: -28% 0;
+  z-index: -1;
+  content: "";
+  background:
+    radial-gradient(70% 52% at 50% 42%, rgb(var(--track-wash) / 0.2), transparent 72%),
+    linear-gradient(120deg, rgb(var(--track-glow) / 0.08), transparent 42%),
+    var(--track-cover) center 32% / min(72rem, 92vw) auto no-repeat;
+  filter: blur(42px) saturate(1.25);
+  opacity: var(--track-atmosphere-opacity, 0.2);
+  transform: scale(1.12);
+  transition: opacity 1.2s ease, filter 1.2s ease;
+  pointer-events: none;
+}
+
+.listening-room.is-playing::before {
+  animation: listening-atmosphere 9s ease-in-out infinite alternate;
+}
+
+.listening-room.is-paused::before {
+  filter: blur(52px) saturate(0.85);
+}
+
+@keyframes listening-atmosphere {
+  from { transform: scale(1.12) translate3d(-1%, -0.5%, 0); }
+  to { transform: scale(1.2) translate3d(1%, 0.5%, 0); }
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    ATMOSPHERE — one continuous piece of film
    Two fixed layers sit behind all content so section boundaries never read
