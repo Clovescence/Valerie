@@ -37,6 +37,7 @@
 @layer base {
   html {
     background: var(--color-sequoia-dark);
+    overflow-x: clip;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -376,6 +377,27 @@ html {
 }
 .af-menu a:hover {
   color: var(--color-sequoia-accent);
+}
+
+/* Keep the listening room fluid on phones and small tablets. The cassette
+   rack is intentionally allowed to use the full content width; its desktop
+   max-width otherwise leaves an oversized gutter around the object. */
+@media (max-width: 767px) {
+  :root {
+    --header-h: 5rem;
+  }
+
+  .af-header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .af-menu {
+    padding-top: calc(var(--header-h) + env(safe-area-inset-top) + 1rem);
+  }
+
+  .mixtapes-wrapper {
+    max-width: none;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
