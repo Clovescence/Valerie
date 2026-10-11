@@ -2697,6 +2697,31 @@
   }
 }
 
+@media (max-width: 767px) {
+  /* On narrow screens the spinning record's rotated bounds are wider than
+     its square container. Keep the artwork inside that container, then stack
+     the song details and playback controls beneath it. */
+  .turntable-wrapper {
+    padding-bottom: 175px;
+  }
+
+  .turntable .platter-base,
+  .turntable .vinyl {
+    width: 84%;
+  }
+
+  .track-meta {
+    right: 24px;
+    bottom: -82px;
+    left: 24px;
+  }
+
+  .turntable-controls {
+    right: 15px;
+    bottom: -126px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
